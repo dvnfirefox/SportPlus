@@ -11,7 +11,8 @@ public class Partie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int point;
+    private int pointLocal;
+    private int pointVisiteur;
     private LocalDateTime date;
 
     @ManyToOne

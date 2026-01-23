@@ -1,0 +1,59 @@
+package com.bot.sportplus.service;
+
+import com.bot.sportplus.model.Utilisateur;
+import com.bot.sportplus.repository.UtilisateurRepository;
+import com.bot.sportplus.tools.Json;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+public class UtilisateurService {
+    @Autowired
+    private UtilisateurRepository utilisateurRepository;
+
+    public ObjectNode creez(String nom, String password) {
+        ObjectNode response = Json.createNode();
+        if(utilisateurRepository.findByNom(nom).isPresent()) {
+            response.put("message", "le nom dutilisateur existe deja.");
+        }else{
+            Utilisateur utilisateur = new Utilisateur();
+            utilisateur.setNom(nom);
+            utilisateur.setPassword(password);
+            //TODO set role
+            utilisateurRepository.save(utilisateur);
+        }
+        return response;
+    }
+    public ObjectNode supprimer(String nom) {
+        ObjectNode response = Json.createNode();
+        Optional<Utilisateur> utilisateur = utilisateurRepository.findByNom(nom);
+        if(utilisateur.isPresent()) {
+            utilisateurRepository.delete(utilisateur.get());
+            response.put("message", "L'utilisateur est supprime.");
+        }else{
+            response.put("message", "Le utilisateur n'existe pas.");
+        }
+        return response;
+    }
+
+    public ObjectNode connection(String nom, String password){
+        ObjectNode response = Json.createNode();
+        Optional<Utilisateur> result = utilisateurRepository.findByNom(nom);
+        if(result.isPresent() && result.get().getPassword().equals(password)) {
+            response.put("connection", true);
+            response.put("message", "connection");
+            response.put("role", result.get().getRole());
+            response.put("id", result.get().getId());
+        }else{
+            response.put("connection", false);
+            response.put("message", "nom ou mot de passe incorrect");
+            response.put("admin", false);
+        }
+        System.out.println(response.toString());
+        return response;
+    }
+}

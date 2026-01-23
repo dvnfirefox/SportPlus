@@ -13,14 +13,8 @@ public class Equipes {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String nom;
-    private String federation; //TODO
+    private String federation;
     private String categorie;
-    @OneToMany(mappedBy = "equipe", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Joueur> joueurs = new ArrayList<>();
-    @OneToMany(mappedBy = "equipeLocal", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Partie> partieLocal = new ArrayList<>();
-    @OneToMany(mappedBy = "equipeVisiteur", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Partie> partieVisiteur = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -52,13 +46,5 @@ public class Equipes {
 
     public void setCategorie(String categorie) {
         this.categorie = categorie;
-    }
-
-    public List<Joueur> getJoueurs() {
-        return joueurs;
-    }
-
-    public void setJoueurs(List<Joueur> joueurs) {
-        this.joueurs = joueurs;
     }
 }
