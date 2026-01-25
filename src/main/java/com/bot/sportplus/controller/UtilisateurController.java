@@ -10,10 +10,7 @@ import jakarta.persistence.Id;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/utilisateur")
@@ -21,18 +18,18 @@ public class UtilisateurController {
     @Autowired
     private UtilisateurService utilisateurService;
 
-    @PostMapping("/creation")
-    public ObjectNode creation(@RequestBody String json){
+    @PostMapping("/creez")
+    public String creation(@RequestBody String json){
         System.out.println(json);
         ObjectNode response = Json.createNode();
 
         try{
             JsonNode node = Json.toJson(json);
-            response = utilisateurService.creez(node.get("nom").toString(), node.get("password").toString());
+            response = utilisateurService.creez(node.get("nom").toString(), node.get("password").toString(), node.get("admin").toString());
         } catch (Exception e) {
-            response.put("error", e.getMessage());
+            response.put("message", e.getMessage());
         }
-        return  response;
+        return  response.toString();
     }
 
     @PostMapping("supprimer")
@@ -46,5 +43,11 @@ public class UtilisateurController {
         }
         return response;
     }
+
+//    @GetMapping("list")
+//    public ObjectNode list(){
+//        ObjectNode response = Json.createNode();
+//
+//    }
 
 }

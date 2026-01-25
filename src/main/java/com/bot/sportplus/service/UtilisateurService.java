@@ -15,16 +15,19 @@ public class UtilisateurService {
     @Autowired
     private UtilisateurRepository utilisateurRepository;
 
-    public ObjectNode creez(String nom, String password) {
+    public ObjectNode creez(String nom, String password, String role) {
         ObjectNode response = Json.createNode();
         if(utilisateurRepository.findByNom(nom).isPresent()) {
             response.put("message", "le nom dutilisateur existe deja.");
+            response.put("status", Boolean.FALSE);
         }else{
             Utilisateur utilisateur = new Utilisateur();
             utilisateur.setNom(nom);
             utilisateur.setPassword(password);
-            //TODO set role
+            utilisateur.setRole(role);
             utilisateurRepository.save(utilisateur);
+            response.put("message", "utilisateur creez avec success.");
+            response.put("status", Boolean.TRUE);
         }
         return response;
     }
