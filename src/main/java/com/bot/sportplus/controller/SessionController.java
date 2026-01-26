@@ -18,7 +18,6 @@ public class SessionController {
     private UtilisateurService utilisateurService;
 
     @PostMapping("/connection")
-
     public String connection(@RequestBody String json, HttpSession session){
         ObjectNode response = Json.createNode();
         try{
@@ -51,3 +50,4 @@ public class SessionController {
         }
     }
 }
+

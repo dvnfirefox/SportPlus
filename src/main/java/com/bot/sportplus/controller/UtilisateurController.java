@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/utilisateur")
 public class UtilisateurController {
@@ -25,7 +27,7 @@ public class UtilisateurController {
 
         try{
             JsonNode node = Json.toJson(json);
-            response = utilisateurService.creez(node.get("nom").toString(), node.get("password").toString(), node.get("admin").toString());
+            response = utilisateurService.creez(node.get("nom").asText(), node.get("password").asText(), node.get("admin").asText());
         } catch (Exception e) {
             response.put("message", e.getMessage());
         }
@@ -34,20 +36,25 @@ public class UtilisateurController {
 
     @PostMapping("supprimer")
     public ObjectNode supprimer(@RequestBody String json){
+        //recoit les demandes supression et les effectues
         ObjectNode response = Json.createNode();
         try{
             JsonNode node = Json.toJson(json);
-            response = utilisateurService.supprimer(node.get("nom").toString());
+            response = utilisateurService.supprimer(node.get("nom").asText());
         } catch (Exception e) {
             response.put("error", e.getMessage());
         }
         return response;
     }
 
-//    @GetMapping("list")
-//    public ObjectNode list(){
-//        ObjectNode response = Json.createNode();
-//
-//    }
-
+    //api endpoint pour faire une recherche d'utilisateur
+    @GetMapping("recherche")
+    public List<String> recherche(@RequestParam String keyword){
+        try{
+            return utilisateurService.recherche(keyword);
+        }catch (Exception e){
+            return List.of(); // retourne une liste vide en cas d'erreur
+        }
+    }
 }
+

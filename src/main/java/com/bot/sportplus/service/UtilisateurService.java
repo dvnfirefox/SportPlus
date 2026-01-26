@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,7 +39,7 @@ public class UtilisateurService {
             utilisateurRepository.delete(utilisateur.get());
             response.put("message", "L'utilisateur est supprime.");
         }else{
-            response.put("message", "Le utilisateur n'existe pas.");
+            response.put("message",  "Le utilisateur n'existe pas.");
         }
         return response;
     }
@@ -56,7 +57,18 @@ public class UtilisateurService {
             response.put("message", "nom ou mot de passe incorrect");
             response.put("admin", false);
         }
-        System.out.println(response.toString());
         return response;
     }
+
+    public List<String> recherche(String keyword){
+        List<Utilisateur> search = utilisateurRepository.findByNomContainingIgnoreCase(keyword);
+
+        // Transforme la liste d'utilisateurs en liste de noms
+        List<String> noms = search.stream()
+                .map(utilisateur -> utilisateur.getNom().replace("\"", "")) // Supprime les guillemets éventuels
+                .toList();
+
+        return noms;
+    }
 }
+
