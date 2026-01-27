@@ -22,7 +22,6 @@ public class UtilisateurController {
 
     @PostMapping("/creez")
     public String creation(@RequestBody String json){
-        System.out.println(json);
         ObjectNode response = Json.createNode();
 
         try{
