@@ -1,28 +1,24 @@
 package com.bot.sportplus.service;
 
-import com.bot.sportplus.model.Officiel;
 import com.bot.sportplus.model.Tournois;
 import com.bot.sportplus.repository.TournoisRepository;
 import com.bot.sportplus.tools.Json;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.sun.jdi.LongValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class TournoisService {
+
     @Autowired
     private TournoisRepository tournoisRepository;
 
-    public boolean creez(LocalDate dateDebut, LocalDate dateFin, String categorie, String federation, int maximum){
+    /** Crée un tournoi */
+    public boolean creez(LocalDate dateDebut, LocalDate dateFin, String categorie, String federation, int maximum) {
         Tournois tournois = new Tournois();
         tournois.setDateDebut(dateDebut);
         tournois.setDateFin(dateFin);
@@ -32,39 +28,68 @@ public class TournoisService {
         tournoisRepository.save(tournois);
         return true;
     }
-    public ObjectNode supprimer(String id){
+
+    /** Supprime un tournoi par ID */
+    public ObjectNode supprimer(String id) {
         ObjectNode response = Json.createNode();
-        Optional<Tournois> utilisateur = tournoisRepository.findById(Long.valueOf(id));
-        if(utilisateur.isPresent()) {
-            tournoisRepository.delete(utilisateur.get());
-            response.put("message", "L'officiel est supprime.");
-        }else{
-            response.put("message",  "Le utilisateur n'existe pas.");
+        Optional<Tournois> tournoi = tournoisRepository.findById(Long.valueOf(id));
+        if (tournoi.isPresent()) {
+            tournoisRepository.delete(tournoi.get());
+            response.put("message", "Le tournoi a été supprimé.");
+        } else {
+            response.put("message", "Le tournoi n'existe pas.");
         }
         return response;
     }
 
-    public List<String> recherche(LocalDateTime debut, LocalDateTime fin,String type){
-        List<Tournois> tournois;
-        if(type.equals("fin")){
-            tournois = tournoisRepository.findByDateFinBetween(debut,fin);
-        }else{
-            tournois = tournoisRepository.findByDateDebutBetween(debut,fin);
+    /** Recherche par intervalle de dates */
+    public List<Tournois> recherche(LocalDate debut, LocalDate fin, String type) {
+        if ("fin".equalsIgnoreCase(type)) {
+            return tournoisRepository.findByDateFinBetween(debut, fin);
+        } else {
+            return tournoisRepository.findByDateDebutBetween(debut, fin);
         }
-        return  tournois.stream().map(Tournois::getCategorie).collect(Collectors.toList());
     }
-    public List<String> recherche(LocalDateTime date, String type) {
-        List<Tournois> tournois = switch (type.toLowerCase()) {
+
+    /** Recherche par date unique (avant/après) */
+    public List<Tournois> recherche(LocalDate date, String type) {
+        return switch (type.toLowerCase()) {
             case "fin.after" -> tournoisRepository.findByDateFinAfter(date);
             case "fin.before" -> tournoisRepository.findByDateFinBefore(date);
             case "debut.after" -> tournoisRepository.findByDateDebutAfter(date);
             case "debut.before" -> tournoisRepository.findByDateDebutBefore(date);
             default -> List.of();
         };
-
-        return tournois.stream()
-                .map(Tournois::getCategorie)
-                .collect(Collectors.toList());
     }
 
+    /** Recherche simple par champ et mot-clé pour TableView */
+    public List<Tournois> rechercheParChamp(String keyword, String champ) {
+        return switch (champ.toLowerCase()) {
+            case "id" -> tournoisRepository.findAll()
+                    .stream()
+                    .filter(t -> String.valueOf(t.getId()).contains(keyword))
+                    .toList();
+            case "categorie" -> tournoisRepository.findAll()
+                    .stream()
+                    .filter(t -> t.getCategorie().toLowerCase().contains(keyword.toLowerCase()))
+                    .toList();
+            case "federation" -> tournoisRepository.findAll()
+                    .stream()
+                    .filter(t -> t.getFederation().toLowerCase().contains(keyword.toLowerCase()))
+                    .toList();
+            case "maximum" -> tournoisRepository.findAll()
+                    .stream()
+                    .filter(t -> String.valueOf(t.getEquipeMaximum()).contains(keyword))
+                    .toList();
+            case "debut" -> tournoisRepository.findAll()
+                    .stream()
+                    .filter(t -> t.getDateDebut().toString().contains(keyword))
+                    .toList();
+            case "fin" -> tournoisRepository.findAll()
+                    .stream()
+                    .filter(t -> t.getDateFin().toString().contains(keyword))
+                    .toList();
+            default -> tournoisRepository.findAll();
+        };
+    }
 }

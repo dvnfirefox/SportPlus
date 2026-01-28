@@ -15,7 +15,6 @@ public interface OfficielRepository extends JpaRepository<Officiel,Integer> {
     List<Officiel> findOfficielBynumeroTelephoneContainingIgnoreCase(String nom);
     List<Officiel> findOfficielByCourrielContainingIgnoreCase(String nom);
     List<Officiel> findOfficielByAdresseContainingIgnoreCase(String nom);
-    List<Officiel> findOfficielByFederationContainingIgnoreCase(String nom);
     List<Officiel> findOfficielByRoleContainingIgnoreCase(String nom);
 
 }
