@@ -41,7 +41,7 @@ public class OfficielController {
             return List.of(); // liste vide en cas d'erreur
         }
     }
-    @PostMapping("supprimer")
+    @PostMapping("/supprimer")
     public ObjectNode supprimer(@RequestBody String json){
         //recoit les demandes supression et les effectues
         ObjectNode response = Json.createNode();
