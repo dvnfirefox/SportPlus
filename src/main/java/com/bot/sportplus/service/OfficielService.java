@@ -17,13 +17,14 @@ public class OfficielService {
     @Autowired
     private OfficielRepository officielRepository;
 
-    public ObjectNode creez(String nom, String phone, String courriel, String adresse,String role) {
+    public ObjectNode creez(String nom, String phone, String courriel, String adresse, String federation, String role) {
         ObjectNode response = Json.createNode();
         Officiel officiel = new Officiel();
         officiel.setNom(nom);
         officiel.setNumeroTelephone(phone);
         officiel.setCourriel(courriel);
         officiel.setAdresse(adresse);
+        officiel.setFederation(federation);
         officiel.setRole(role);
         officielRepository.save(officiel);
 
@@ -40,6 +41,7 @@ public class OfficielService {
             case "numeroTelephone" -> officielRepository.findOfficielBynumeroTelephoneContainingIgnoreCase(keyword);
             case "courriel" -> officielRepository.findOfficielByCourrielContainingIgnoreCase(keyword);
             case "adresse" -> officielRepository.findOfficielByAdresseContainingIgnoreCase(keyword);
+            case "federation" -> officielRepository.findOfficielByFederationContainingIgnoreCase(keyword);
             case "role" -> officielRepository.findOfficielByRoleContainingIgnoreCase(keyword);
             default -> List.of();
         };

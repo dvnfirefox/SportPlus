@@ -22,7 +22,7 @@ public class OfficielController {
         ObjectNode response = Json.createNode();
         try{
             JsonNode node = Json.toJson(json);
-            response = officielService.creez(node.get("nom").asText(), node.get("phone").asText(), node.get("courriel").asText(), node.get("adresse").asText(),node.get("role").asText());
+            response = officielService.creez(node.get("nom").asText(), node.get("phone").asText(), node.get("courriel").asText(), node.get("adresse").asText(), node.get("federation").asText(), node.get("role").asText());
         }catch (Exception e){
             response.put("status",e.getMessage());
         }

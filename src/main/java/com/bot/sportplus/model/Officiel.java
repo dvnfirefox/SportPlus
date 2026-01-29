@@ -15,6 +15,7 @@ public class Officiel {
     private String numeroTelephone;
     private String courriel;
     private String adresse;
+    private String federation;
     private String role;
 
     public Long getId() {
@@ -55,6 +56,14 @@ public class Officiel {
 
     public void setAdresse(String adresse) {
         this.adresse = adresse;
+    }
+
+    public String getFederation() {
+        return federation;
+    }
+
+    public void setFederation(String federation) {
+        this.federation = federation;
     }
 
     public String getRole() {
