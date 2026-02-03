@@ -2,13 +2,9 @@ package com.bot.sportplus.model;
 
 
 import jakarta.persistence.*;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-public class Equipes {
+public class Equipe {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

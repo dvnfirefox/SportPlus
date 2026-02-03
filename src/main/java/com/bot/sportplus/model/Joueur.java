@@ -13,7 +13,7 @@ public class Joueur {
 
     @ManyToOne
     @JoinColumn(name = "equipe_id")
-    private Equipes equipe;
+    private Equipe equipe;
 
     public Long getId() {
         return id;
@@ -39,11 +39,11 @@ public class Joueur {
         this.numero = numero;
     }
 
-    public Equipes getEquipe() {
+    public Equipe getEquipe() {
         return equipe;
     }
 
-    public void setEquipe(Equipes equipe) {
+    public void setEquipe(Equipe equipe) {
         this.equipe = equipe;
     }
 }

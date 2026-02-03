@@ -3,7 +3,6 @@ package com.bot.sportplus.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class Tournois {
             joinColumns = @JoinColumn(name = "tournois_id"),
             inverseJoinColumns = @JoinColumn(name = "equipe_id")
     )
-    private List<Equipes> equipes = new ArrayList<>(); // Initialize the list
+    private List<Equipe> equipes = new ArrayList<>(); // Initialize the list
 
     public Long getId() {
         return id;
@@ -73,11 +72,11 @@ public class Tournois {
         this.equipeMaximum = equipeMaximum;
     }
 
-    public List<Equipes> getEquipes() {
+    public List<Equipe> getEquipes() {
         return equipes;
     }
 
-    public void setEquipes(List<Equipes> equipes) {
+    public void setEquipes(List<Equipe> equipes) {
         this.equipes = equipes;
     }
 }

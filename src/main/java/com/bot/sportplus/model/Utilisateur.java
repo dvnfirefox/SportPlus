@@ -1,9 +1,6 @@
 package com.bot.sportplus.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Utilisateur {
@@ -13,6 +10,8 @@ public class Utilisateur {
     private String nom;
     private String password;
     private String role;
+    @OneToOne
+    private Equipe equipe;
 
     public Utilisateur() {}
     public Utilisateur(String nom, String password, boolean admin) {
@@ -51,5 +50,13 @@ public class Utilisateur {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Equipe getEquipe() {
+        return equipe;
+    }
+
+    public void setEquipe(Equipe equipe) {
+        this.equipe = equipe;
     }
 }

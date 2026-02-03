@@ -1,9 +1,11 @@
 package com.bot.sportplus.service;
 
+import com.bot.sportplus.model.Equipe;
 import com.bot.sportplus.model.Tournois;
 import com.bot.sportplus.repository.TournoisRepository;
 import com.bot.sportplus.tools.Json;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +42,58 @@ public class TournoisService {
             response.put("message", "Le tournoi n'existe pas.");
         }
         return response;
+    }
+    public boolean modifier(long id, LocalDate dateDebut, LocalDate dateFin, String categorie, String federation, int maximum){
+        Optional<Tournois> tournoi = tournoisRepository.findById(id);
+        if (tournoi.isPresent()) {
+            tournoi.get().setDateDebut(dateDebut);
+            tournoi.get().setDateFin(dateFin);
+            tournoi.get().setCategorie(categorie);
+            tournoi.get().setFederation(federation);
+            tournoi.get().setEquipeMaximum(maximum);
+            tournoisRepository.save(tournoi.get());
+            return true;
+        }else  {
+            return false;
+        }
+    }
+    @Transactional
+    public boolean addEquipe(Equipe equipe, long id) {
+        Tournois tournois = tournoisRepository.findById(Long.valueOf(id)).orElse(null);
+        if (tournois != null) {
+            return false;
+        }
+        if(tournois.getEquipes().size() >= tournois.getEquipeMaximum()) {
+            return false;
+        }
+        if(tournois.getEquipes().stream().anyMatch(e -> e.getId().equals(equipe.getId()))) {
+            return false;
+        }
+        tournois.getEquipes().add(equipe);
+        tournoisRepository.save(tournois);
+        return true;
+    }
+    public boolean removeEquipe(Equipe equipe, long id) {
+        Tournois tournois = tournoisRepository.findById(Long.valueOf(id)).orElse(null);
+        if (tournois != null) {
+            return false;
+        }
+        if(!tournois.getEquipes().stream().anyMatch(e -> e.getId().equals(equipe.getId()))) {
+
+            return false;
+        }
+        tournois.getEquipes().remove(equipe);
+        tournoisRepository.save(tournois);
+        return true;
+
+    }
+    public Tournois rechercheId(String id) {
+        Optional<Tournois> tournoi = tournoisRepository.findById(Long.valueOf(id));
+        if (tournoi.isPresent()) {
+            return tournoi.get();
+        }else  {
+            return null;
+        }
     }
 
     /** Recherche par intervalle de dates */

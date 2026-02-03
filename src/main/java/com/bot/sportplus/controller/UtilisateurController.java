@@ -23,12 +23,13 @@ public class UtilisateurController {
     @PostMapping("/creez")
     public String creation(@RequestBody String json){
         ObjectNode response = Json.createNode();
-
+        System.out.println(json.toString());
         try{
             JsonNode node = Json.toJson(json);
             response = utilisateurService.creez(node.get("nom").asText(), node.get("password").asText(), node.get("admin").asText());
         } catch (Exception e) {
             response.put("message", e.getMessage());
+            System.out.println(e.getMessage());
         }
         return  response.toString();
     }

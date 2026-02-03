@@ -53,6 +53,23 @@ public class TournoisController {
         return response;
     }
 
+    @PostMapping("modifier")
+    public boolean modifier(@RequestBody String json) {
+        try{
+            JsonNode node = Json.toJson(json);
+            long id  = node.get("id").asLong();
+            LocalDate dateDebut = LocalDate.parse(node.get("datedebut").asText());
+            LocalDate dateFin = LocalDate.parse(node.get("datefin").asText());
+            String categorie = node.get("categorie").asText();
+            String federation = node.get("federation").asText();
+            int maximum = node.get("maximum").asInt();
+            return tournoisService.modifier(id, dateDebut, dateFin, categorie, federation, maximum);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return false;
+
+        }
+    }
     /** Recherche par intervalle de dates */
     @GetMapping("/recherche/between")
     public List<Tournois> rechercheBetween(

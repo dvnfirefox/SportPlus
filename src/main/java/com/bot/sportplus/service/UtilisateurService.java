@@ -1,5 +1,6 @@
 package com.bot.sportplus.service;
 
+import com.bot.sportplus.model.Equipe;
 import com.bot.sportplus.model.Utilisateur;
 import com.bot.sportplus.repository.UtilisateurRepository;
 import com.bot.sportplus.tools.Json;
@@ -52,6 +53,11 @@ public class UtilisateurService {
             response.put("message", "connection");
             response.put("role", result.get().getRole());
             response.put("id", result.get().getId());
+            if(result.get().getEquipe() != null) {
+                response.put("equipe", result.get().getEquipe().getId());
+            }else{
+                response.put("equipe", 0);
+            }
         }else{
             response.put("connection", false);
             response.put("message", "nom ou mot de passe incorrect");
@@ -69,6 +75,13 @@ public class UtilisateurService {
                 .toList();
 
         return noms;
+    }
+    public void addEquipe(String nom, Equipe equipe) {
+        Optional<Utilisateur> utilisateur = utilisateurRepository.findByNom(nom);
+        if(utilisateur.isPresent()) {
+            utilisateur.get().setEquipe(equipe);
+            utilisateurRepository.save(utilisateur.get());
+        }
     }
 }
 
