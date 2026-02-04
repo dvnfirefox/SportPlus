@@ -20,8 +20,23 @@ public class UtilisateurController {
     @Autowired
     private UtilisateurService utilisateurService;
 
+
     @PostMapping("/creez")
     public String creation(@RequestBody String json){
+        ObjectNode response = Json.createNode();
+        System.out.println(json.toString());
+        try{
+            JsonNode node = Json.toJson(json);
+            response = utilisateurService.creez(node.get("nom").asText(), node.get("password").asText(),"user");
+        } catch (Exception e) {
+            response.put("message", e.getMessage());
+            System.out.println(e.getMessage());
+        }
+        return  response.toString();
+    }
+
+    @PostMapping("/creez/admin")
+    public String creationadmin(@RequestBody String json){
         ObjectNode response = Json.createNode();
         System.out.println(json.toString());
         try{

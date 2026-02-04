@@ -3,6 +3,8 @@ package com.bot.sportplus.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class Equipe {
     @Id
@@ -11,6 +13,9 @@ public class Equipe {
     private String nom;
     private String federation;
     private String categorie;
+    @OneToMany(mappedBy = "equipe")
+    private List<Joueur> joueurs;
+
 
     public Long getId() {
         return id;

@@ -6,12 +6,16 @@ import com.bot.sportplus.service.UtilisateurService;
 import com.bot.sportplus.tools.Json;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("equipe")
@@ -26,22 +30,24 @@ public class EquipeController {
 //    private String categorie;
 
     @PostMapping("creez")
-    public boolean creez(@RequestBody String json){
-        System.out.println(json.toString());
+    public String creez(@RequestBody String json, HttpSession session) {
+        String role = (String) session.getAttribute("role");
+        if (role == null || !role.equals("user") && !role.equals("admin")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+        ObjectNode response = Json.createNode();
         try{
             JsonNode node = Json.toJson(json);
             String nom = node.get("nom").asText();
             String federation = node.get("federation").asText();
             String categorie = node.get("categorie").asText();
             String utilisateur = node.get("utilisateur").asText();
-            boolean resultat = equipeService.creez(nom,federation,categorie,utilisateur);
-            System.out.println("resultat = "+resultat);
-            return resultat;
+            return equipeService.creez(nom,federation,categorie,utilisateur).toString();
         }catch (Exception e){
             e.printStackTrace();
-            System.out.println(e.getMessage());
         }
-        return false;
+        response.put("resultat", false);
+        return response.toString();
     }
 
     @PostMapping("/supprimer")

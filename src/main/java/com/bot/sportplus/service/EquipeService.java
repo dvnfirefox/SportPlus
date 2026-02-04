@@ -19,9 +19,11 @@ public class EquipeService {
     @Autowired
     private UtilisateurService utilisateurService;
 
-    public boolean creez(String nom, String federation, String categorie, String utilisateur){
+    public ObjectNode creez(String nom, String federation, String categorie, String utilisateur){
+        ObjectNode response = Json.createNode();
         if(equipeRepository.existsByNom(nom)){
-            return false;
+            response.put("resultat", false);
+            return response;
         }
         Equipe equipe = new Equipe();
         equipe.setNom(nom);
@@ -29,7 +31,10 @@ public class EquipeService {
         equipe.setCategorie(categorie);
         equipeRepository.save(equipe);
         utilisateurService.addEquipe(utilisateur, equipe);
-        return true;
+        response.put("resultat", true);
+        response.put("equipe", equipe.getId());
+        response.put("equipeNom", equipe.getNom());
+        return response;
     }
 
     public ObjectNode supprimer(String id) {

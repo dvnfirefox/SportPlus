@@ -29,7 +29,7 @@ public class SessionController {
             if(result.has("connection") && result.get("connection").asBoolean()){
                 //mets la session  en memoire
                 session.setAttribute("nom", nom);
-                session.setAttribute("role",  result.get("role"));
+                session.setAttribute("role",  result.get("role").asText());
                 session.setAttribute("connection", true);
                 response.put("connection", true);
                 if(result.has("equipe")){
