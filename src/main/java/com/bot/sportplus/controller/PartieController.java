@@ -10,12 +10,11 @@ import com.bot.sportplus.tools.Json;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.cglib.core.Local;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("partie")
@@ -26,26 +25,6 @@ public class PartieController {
     private TournoisService tournoisService;
     @Autowired
     private EquipeService equipeService;
-
-    @PostMapping("creez")
-    public String creez(@RequestBody String json){
-        ObjectNode response = Json.createNode();
-        try{
-            JsonNode node = Json.toJson(json);
-            Tournois tournois = tournoisService.rechercheId(node.get("tournois").asText());
-            LocalDate date = LocalDate.parse(node.get("date").asText());
-            int pointLocal = node.get("localpoint").asInt();
-            int pointVisiteur = node.get("visiteurpoint").asInt();
-            Equipe local = equipeService.rechercheId(node.get("equipe").asText());
-            Equipe visiteur = equipeService.rechercheId(node.get("equipe").asText());
-            boolean resultat = partieService.creez(tournois, date, pointLocal, pointVisiteur, local, visiteur);
-            response.put("status", resultat);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            response.put("status", false);
-        }
-        return response.toString();
-    }
 
     @PostMapping("/supprimer")
     public ObjectNode supprimer(@RequestBody String json){
@@ -60,4 +39,49 @@ public class PartieController {
         System.out.println(response);
         return response;
     }
+    @PostMapping("/calendrier")
+    public boolean calendrierPar(@RequestBody String json) {
+        try{
+            JsonNode node = Json.toJson(json);
+            long id =  node.get("id").asLong();
+            return partieService.createCalendrier(id);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+    @GetMapping("/recherchedate")
+    public List<Partie> rechercherDate(
+            @RequestParam String type,
+            @RequestParam String date
+    ){
+        try {
+            LocalDate date1 = LocalDate.parse(date);
+            return partieService.rechercheDate(type, date1);
+        } catch (Exception e) {
+            return List.of(); // liste vide en cas d'erreur
+        }
+    }
+    @GetMapping("recherche")
+    public List<Partie> recherchePartie(
+            @RequestParam String type,
+            @RequestParam String text
+    ){
+        return partieService.recherche(type, text);
+    }
+    @PostMapping("/pointage")
+    public boolean pointagePar(@RequestBody String json) {
+        try {
+            JsonNode node = Json.toJson(json);
+            long id = node.get("id").asLong();
+            int pointLocal = node.get("pointLocal").asInt();
+            int pointVisiteur = node.get("pointVisiteur").asInt();
+            return partieService.pointage(id, pointVisiteur, pointLocal);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
 }

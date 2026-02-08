@@ -1,5 +1,6 @@
 package com.bot.sportplus.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -22,7 +23,24 @@ public class Tournois {
             joinColumns = @JoinColumn(name = "tournois_id"),
             inverseJoinColumns = @JoinColumn(name = "equipe_id")
     )
-    private List<Equipe> equipes = new ArrayList<>(); // Initialize the list
+    @JsonIgnoreProperties({"tournois", "joueurs"})
+    private List<Equipe> equipes = new ArrayList<>();
+    @OneToMany(
+            mappedBy = "tournois",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Partie> parties = new ArrayList<>();
+
+    public List<Partie> getParties() {
+        return parties;
+    }
+
+    public void setParties(List<Partie> parties) {
+        this.parties = parties;
+    }
+
+
 
     public Long getId() {
         return id;

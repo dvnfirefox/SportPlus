@@ -1,6 +1,7 @@
 package com.bot.sportplus.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -13,9 +14,30 @@ public class Equipe {
     private String nom;
     private String federation;
     private String categorie;
+
     @OneToMany(mappedBy = "equipe")
     private List<Joueur> joueurs;
 
+
+    @ManyToMany(mappedBy = "equipes")
+    @JsonIgnoreProperties({"equipes", "parties"})
+    private List<Tournois> tournois;
+
+    public List<Joueur> getJoueurs() {
+        return joueurs;
+    }
+
+    public void setJoueurs(List<Joueur> joueurs) {
+        this.joueurs = joueurs;
+    }
+
+    public List<Tournois> getTournois() {
+        return tournois;
+    }
+
+    public void setTournois(List<Tournois> tournois) {
+        this.tournois = tournois;
+    }
 
     public Long getId() {
         return id;

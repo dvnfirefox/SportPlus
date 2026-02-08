@@ -1,5 +1,6 @@
 package com.bot.sportplus.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -16,14 +17,19 @@ public class Partie {
 
     @ManyToOne
     @JoinColumn(name = "Tournois_id")
+    @JsonIgnoreProperties({"parties", "equipes"})  // ← ADD THIS - breaks Partie→Tournois→Partie cycle
     private Tournois tournois;
+
     @ManyToOne
     @JoinColumn(name = "equipe_local_id")
+    @JsonIgnoreProperties({"tournois", "joueurs", "parties"})  // ← ADD THIS - breaks Partie→Equipe→Tournois cycle
     private Equipe equipeLocal;
 
     @ManyToOne
     @JoinColumn(name = "equipe_visiteur_id")
+    @JsonIgnoreProperties({"tournois", "joueurs", "parties"})  // ← ADD THIS - breaks Partie→Equipe→Tournois cycle
     private Equipe equipeVisiteur;
+
 
     public Tournois getTournois() {
         return tournois;

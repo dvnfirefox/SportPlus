@@ -12,9 +12,13 @@ import java.util.List;
 @Repository
 public interface PartieRepository extends JpaRepository<Partie, Long> {
 
-    List<Partie> findByDateBetween(LocalDate start, LocalDate end);
+    List<Partie> findByDate(LocalDate date);
     List<Partie> findByDateAfter(LocalDate start);
     List<Partie> findByDateBefore(LocalDate start);
-    List<Partie> findByEquipeLocal(Equipe equipeLocal);
-    List<Partie> findByEquipeVisiteur(Equipe equipeVisiteur);
+
+
+    // Add these:
+    List<Partie> findByTournoisId(Long tournoislId);
+    List<Partie> findByEquipeLocalNomIgnoreCase(String nom);
+    List<Partie> findByEquipeVisiteurNomIgnoreCase(String nom);
 }

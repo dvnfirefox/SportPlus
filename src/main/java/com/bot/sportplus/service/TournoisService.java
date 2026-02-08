@@ -2,6 +2,7 @@ package com.bot.sportplus.service;
 
 import com.bot.sportplus.model.Equipe;
 import com.bot.sportplus.model.Tournois;
+import com.bot.sportplus.repository.EquipeRepository;
 import com.bot.sportplus.repository.TournoisRepository;
 import com.bot.sportplus.tools.Json;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -18,6 +19,8 @@ public class TournoisService {
 
     @Autowired
     private TournoisRepository tournoisRepository;
+    @Autowired
+    private EquipeRepository  equipeRepository;
 
     /** Crée un tournoi */
     public boolean creez(LocalDate dateDebut, LocalDate dateFin, String categorie, String federation, int maximum) {
@@ -108,10 +111,10 @@ public class TournoisService {
     /** Recherche par date unique (avant/après) */
     public List<Tournois> recherche(LocalDate date, String type) {
         return switch (type.toLowerCase()) {
-            case "fin.after" -> tournoisRepository.findByDateFinAfter(date);
-            case "fin.before" -> tournoisRepository.findByDateFinBefore(date);
-            case "debut.after" -> tournoisRepository.findByDateDebutAfter(date);
-            case "debut.before" -> tournoisRepository.findByDateDebutBefore(date);
+            case "fin.after" -> tournoisRepository.findByDateFinAfterOrderByDateDebutDesc(date);
+            case "fin.before" -> tournoisRepository.findByDateFinBeforeOrderByDateFinDesc(date);
+            case "debut.after" -> tournoisRepository.findByDateDebutAfterOrderByDateDebutDesc(date);
+            case "debut.before" -> tournoisRepository.findByDateDebutBeforeOrderByDateFinDesc(date);
             default -> List.of();
         };
     }
@@ -145,5 +148,41 @@ public class TournoisService {
                     .toList();
             default -> tournoisRepository.findAll();
         };
+    }
+
+    public boolean addEquipe(long equipe, Long tournois){
+        Optional<Tournois> tournoisOptional = tournoisRepository.findById(tournois);
+        Optional<Equipe> equipeOptional = equipeRepository.findById(equipe);
+        if (tournoisOptional.isEmpty() || equipeOptional.isEmpty()) {
+            return false;
+        }
+        Tournois t = tournoisOptional.get();
+        Equipe e = equipeOptional.get();
+
+        t.getEquipes().add(e);
+        e.getTournois().add(t);
+
+        tournoisRepository.save(t);  // ✅ Save the owning side
+        return true;
+    }
+    public boolean removeEquipe(long equipe, Long tournois){
+        Optional<Tournois> tournoisOptional = tournoisRepository.findById(tournois);
+        Optional<Equipe> equipeOptional = equipeRepository.findById(equipe);
+        if (tournoisOptional.isEmpty() || equipeOptional.isEmpty()) {
+            return false;
+        }
+        tournoisOptional.get().getEquipes().remove(equipeOptional.get());
+        equipeOptional.get().getTournois().remove(tournoisOptional.get());
+        tournoisRepository.save(tournoisOptional.get());
+        return true;
+    }
+
+    public List<Tournois> tournoisLive(){
+        LocalDate now = LocalDate.now();
+        return tournoisRepository.findByDateDebutBeforeAndDateFinAfter(now, now);
+    }
+    public List<Tournois> tournoisFuture(){
+        LocalDate now = LocalDate.now();
+        return tournoisRepository.findByDateFinAfter(now);
     }
 }

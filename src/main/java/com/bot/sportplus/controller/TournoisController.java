@@ -1,6 +1,7 @@
 package com.bot.sportplus.controller;
 
 import com.bot.sportplus.model.Tournois;
+import com.bot.sportplus.service.PartieService;
 import com.bot.sportplus.service.TournoisService;
 import com.bot.sportplus.tools.Json;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,6 +18,8 @@ public class TournoisController {
 
     @Autowired
     private TournoisService tournoisService;
+    @Autowired
+    private PartieService partieService;
 
     /** Crée un tournoi */
     @PostMapping("/creez")
@@ -112,4 +115,54 @@ public class TournoisController {
             return List.of();
         }
     }
+
+    @PostMapping("/calendrier")
+    public boolean calendrier(@RequestBody String json) {
+        try{
+            JsonNode node = Json.toJson(json);
+            long id = node.get("equipe").asLong();
+            return partieService.createCalendrier(id);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+
+        }
+        return false;
+    }
+
+    @PostMapping("addequipe")
+    public boolean addEquipe(@RequestBody String json) {
+        try{
+            JsonNode node = Json.toJson(json);
+            long equipe = node.get("equipe").asLong();
+            long tournois = node.get("tournois").asLong();
+            return tournoisService.addEquipe(equipe, tournois);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+    @PostMapping("removeequipe")
+    public boolean removeEquipe(@RequestBody String json) {
+        try{
+            JsonNode node = Json.toJson(json);
+            long equipe = node.get("equipe").asLong();
+            long tournois = node.get("tournois").asLong();
+            return tournoisService.removeEquipe(equipe, tournois);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+    @GetMapping("/live")
+    public List<Tournois> live() {
+        return tournoisService.tournoisLive();
+    }
+    @GetMapping("/future")
+    public List<Tournois> future() {
+        return tournoisService.tournoisFuture();
+    }
+
+
+
 }
