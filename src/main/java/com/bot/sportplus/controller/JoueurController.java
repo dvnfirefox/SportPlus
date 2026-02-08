@@ -29,6 +29,7 @@ public class JoueurController {
         if (role == null || !role.equals("user") && !role.equals("admin")) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
+        System.out.println(json);
         try {
             JsonNode node = Json.toJson(json);
             String nom = node.get("nom").asText();
@@ -65,6 +66,7 @@ public class JoueurController {
         try{
             JsonNode node = Json.toJson(json);
             long id  = node.get("id").asLong();
+            System.out.println(joueurService.findAllEquipe(id));
             return joueurService.findAllEquipe(id);
         }catch (Exception e){
             System.out.println(e.getMessage());

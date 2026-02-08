@@ -1,6 +1,7 @@
 package com.bot.sportplus.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +14,7 @@ public class Joueur {
 
     @ManyToOne
     @JoinColumn(name = "equipe_id")
+    @JsonIgnoreProperties({"joueurs"})  // Prevents Equipe from serializing its joueurs list
     private Equipe equipe;
 
     public Long getId() {
