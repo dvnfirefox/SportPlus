@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/tournois")
@@ -56,7 +58,7 @@ public class TournoisController {
         return response;
     }
 
-    @PostMapping("modifier")
+    @PostMapping("/modifier")  // ← Added /
     public boolean modifier(@RequestBody String json) {
         try{
             JsonNode node = Json.toJson(json);
@@ -129,7 +131,7 @@ public class TournoisController {
         return false;
     }
 
-    @PostMapping("addequipe")
+    @PostMapping("/addequipe")  // ← Added /
     public boolean addEquipe(@RequestBody String json) {
         try{
             JsonNode node = Json.toJson(json);
@@ -141,7 +143,8 @@ public class TournoisController {
         }
         return false;
     }
-    @PostMapping("removeequipe")
+
+    @PostMapping("/removeequipe")  // ← Added /
     public boolean removeEquipe(@RequestBody String json) {
         try{
             JsonNode node = Json.toJson(json);
@@ -158,11 +161,19 @@ public class TournoisController {
     public List<Tournois> live() {
         return tournoisService.tournoisLive();
     }
+
     @GetMapping("/future")
     public List<Tournois> future() {
         return tournoisService.tournoisFuture();
     }
 
-
-
+    @GetMapping("/classement")
+    public Map<String, Integer> classement(@RequestParam long tournoiId) {
+        try {
+            return tournoisService.Classement(tournoiId);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new LinkedHashMap<>();
+        }
+    }
 }

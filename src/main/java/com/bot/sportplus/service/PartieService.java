@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,8 +66,19 @@ public class PartieService {
         System.out.println("Searching with type: " + type + ", date: " + date);
         List<Partie> result = switch (type){
             case "now", "date" -> partieRepository.findByDate(date);
-            case "apres" -> partieRepository.findByDateAfter(date);
-            case "avant" -> partieRepository.findByDateBefore(date);
+            case "apres" -> partieRepository.findByDateGreaterThanEqual(date);
+            case "avant" -> partieRepository.findByDateLessThanEqual(date);
+            default -> List.of();
+        };
+        System.out.println("Found " + result.size() + " parties");
+        return result;
+    }
+    public List<Partie> rechercheDateByEquipe(String type, LocalDate date, long equipe) {
+        System.out.println("Searching with type: " + type + ", date: " + date + ", equipe: " + equipe);
+        List<Partie> result = switch (type){
+            case "now", "date" -> partieRepository.findByDateAndEquipe(date, equipe);
+            case "apres" -> partieRepository.findByDateGreaterThanEqualAndEquipe(date, equipe);
+            case "avant" -> partieRepository.findByDateLessThanEqualAndEquipe(date, equipe);
             default -> List.of();
         };
         System.out.println("Found " + result.size() + " parties");
@@ -118,5 +130,13 @@ public class PartieService {
             }
         }
         return true;
+    }
+    public List<Partie> futurePartie(long id) {
+        List<Partie> local = partieRepository.findByEquipeLocalId(id);
+        List<Partie> visiteur = partieRepository.findByEquipeVisiteurId(id);
+
+        List<Partie> combined = new ArrayList<>(local);
+        combined.addAll(visiteur);
+        return combined;
     }
 }

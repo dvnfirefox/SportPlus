@@ -34,6 +34,8 @@ public class EquipeService {
         response.put("resultat", true);
         response.put("equipe", equipe.getId());
         response.put("equipeNom", equipe.getNom());
+        response.put("equipeFederation", equipe.getFederation());
+        response.put("equipeCategorie", equipe.getCategorie());
         return response;
     }
 
@@ -61,4 +63,6 @@ public class EquipeService {
     public String nom(long id){
         return equipeRepository.findById(id).get().getNom();
     }
+    public String federation(long id){return equipeRepository.findById(id).get().getFederation();}
+    public String categorie(long id){return equipeRepository.findById(id).get().getCategorie();}
 }

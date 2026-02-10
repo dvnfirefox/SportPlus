@@ -54,15 +54,33 @@ public class PartieController {
     @GetMapping("/recherchedate")
     public List<Partie> rechercherDate(
             @RequestParam String type,
-            @RequestParam String date
+            @RequestParam String date,
+            @RequestParam(required = false) String equipe
     ){
         try {
             LocalDate date1 = LocalDate.parse(date);
-            return partieService.rechercheDate(type, date1);
+            if (equipe != null && !equipe.isEmpty() && !equipe.equals("0")) {
+                // Appeler une méthode de service qui filtre par équipe
+                return partieService.rechercheDateByEquipe(type, date1, Long.parseLong(equipe));
+            } else {
+                // Appeler la méthode existante sans filtre d'équipe
+                return partieService.rechercheDate(type, date1);
+            }
         } catch (Exception e) {
             return List.of(); // liste vide en cas d'erreur
         }
     }
+
+    @GetMapping("futurePartie")
+    public List<Partie> futurePartie(@RequestParam String equipe){
+        try{
+            long id  = Long.parseLong(equipe);
+            return partieService.futurePartie(id);
+        }catch (Exception e){
+            return List.of();
+        }
+    }
+
     @GetMapping("recherche")
     public List<Partie> recherchePartie(
             @RequestParam String type,

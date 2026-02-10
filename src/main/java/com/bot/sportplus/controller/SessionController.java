@@ -25,7 +25,6 @@ public class SessionController {
             String nom = node.get("nom").asText();
             String password = node.get("password").asText();
             ObjectNode result = utilisateurService.connection(nom,password);
-            System.out.println(result);
             if(result.has("connection") && result.get("connection").asBoolean()){
                 //mets la session  en memoire
                 session.setAttribute("nom", nom);
@@ -35,12 +34,15 @@ public class SessionController {
                 if(result.has("equipe")){
                     response.put("equipe", result.get("equipe"));
                     response.put("equipeNom", equipeService.nom(result.get("equipe").asInt()));
+                    response.put("equipeFederation", equipeService.federation(result.get("equipe").asInt()));
+                    response.put("equipeCategorie", equipeService.categorie(result.get("equipe").asInt()));
                 }
             }else
                 response.put("connection", false);
         } catch (Exception e) {
             response.put("error", e.getMessage());
         }
+        System.out.println(response);
         return response.toString();
     }
     @PostMapping("/connectionadmin")
